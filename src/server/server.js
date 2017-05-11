@@ -1,14 +1,24 @@
-const express = require('express')
-const path = require('path')
-const app = express()
+var path = require('path')
+var express = require('express')
+var app = express()
+var bodyParser = require('body-parser')
+var methodOverride = require('method-override')
+var morgan = require('morgan')
+var cors = require('cors')
 
-// var bodyParser = require('body-parser')
+app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({'extended': 'true'}))
+app.use(bodyParser.json())
+app.use(bodyParser.json({type: 'application/vnd.api+json'}))
+app.use(methodOverride())
+app.use(cors())
 
-// // parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false }))
-
-// // parse application/json
-// app.use(bodyParser.json())
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'DELETE,PUT')
+  res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With, Content-Type, Accept')
+  next()
+})
 
 app.use(express.static(path.join(__dirname, '../../dist')))
 
@@ -16,17 +26,10 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, '../../dist/index.html'))
 })
 
-app.post('/', function (req, res) {
-  let data = ''
-  req.on('data', function (chunk) {
-    data += chunk
-  })
-  req.on('end', function () {
-    debugger
-    data // will be the same here regardless of whether I use bodyParser here in the back end and/or JSON.stringify on the front end
-  })
+app.post('/contacts', function (req, res) {
+  console.log('creating the contacts')
+  res.json(req.body)
 })
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
-})
+app.listen(8080)
+console.log('App listening on port 8080')
