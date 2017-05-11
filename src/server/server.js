@@ -22,6 +22,7 @@ app.post('/', function (req, res) {
     data += chunk
   })
   req.on('end', function () {
+    debugger
     data // will be the same here regardless of whether I use bodyParser here in the back end and/or JSON.stringify on the front end
   })
 })
